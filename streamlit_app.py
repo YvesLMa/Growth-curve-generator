@@ -130,7 +130,7 @@ if uploaded_file is not None:
                             row=1, col=idx + 1
                         )
 
-                fig.update_xaxes(title_text='Time (hours)', range=[0, 11], linecolor='black', linewidth=1, showline=True, mirror=True)
+                fig.update_xaxes(title_text='Time (hours)', linecolor='black', linewidth=1, showline=True, mirror=True)
                 fig.update_yaxes(title_text='OD600', linecolor='black', linewidth=1, showline=True, mirror=True)
                 fig.update_layout(
                     title_text="E. coli Growth Curve Analysis",
