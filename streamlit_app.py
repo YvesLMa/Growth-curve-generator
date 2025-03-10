@@ -59,7 +59,7 @@ if uploaded_file is not None:
                 df_growth = pd.read_excel(uploaded_file, sheet_name=selected_sheet)
 
                 # Convert 'Time' column to hours
-                df_growth['Time_hours'] = df_growth['Time'].dt.total_seconds() / 3600  # Converts timedelta to hours
+                df_growth['Time_hours'] = df_growth['Time'].apply(lambda x: x.hour + x.minute / 60 + x.second / 3600)
 
                 # Process blank curve if available
                 if blank_curve_data:
