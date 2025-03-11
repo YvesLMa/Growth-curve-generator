@@ -1,8 +1,8 @@
-# 🎈 Blank app template
+# 🎈 Growth curves generator 
 
-A simple Streamlit app template for you to modify!
+A simple Streamlit app to generate growth curves from plate reader data!
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]([https://blank-app-template.streamlit.app/](https://blank-app-x38t89kdva.streamlit.app/#7700d050))
 
 ### How to run it on your own machine
 
@@ -17,3 +17,4 @@ A simple Streamlit app template for you to modify!
    ```
    $ streamlit run streamlit_app.py
    ```
+Or 3. enjoy the webapp : https://blank-app-x38t89kdva.streamlit.app/#7700d050
