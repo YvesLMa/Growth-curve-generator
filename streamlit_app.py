@@ -51,6 +51,9 @@ if uploaded_file is not None:
 
         blank_curve_data = {"name": blank_curve_name, "columns": blank_replicates}
 
+    # ✅ Option to plot on same plot or subplots
+    plot_type = st.radio("Select plot type", ["Same Plot", "Subplots"])
+
     # Analyze button
     if st.button("Analyze Growth Curves"):
         with st.spinner("Analyzing growth curves..."):
@@ -73,8 +76,15 @@ if uploaded_file is not None:
                 def exponential_model(t, a, b):
                     return a * np.exp(b * t)
 
-                # Create subplots
-                fig = make_subplots(rows=1, cols=len(curve_data), shared_xaxes=True, subplot_titles=[curve["name"] for curve in curve_data])
+                # ✅ Create the plot(s) depending on plot_type
+                if plot_type == "Subplots":
+                    fig = make_subplots(
+                        rows=1, cols=len(curve_data), 
+                        shared_xaxes=True, 
+                        subplot_titles=[curve["name"] for curve in curve_data]
+                    )
+                else:
+                    fig = go.Figure()
 
                 for idx, curve in enumerate(curve_data):
                     df_growth['OD_mean'] = df_growth[curve["columns"]].mean(axis=1)
@@ -112,30 +122,24 @@ if uploaded_file is not None:
                         generation_time = np.log(2) / b_best
 
                         fig.add_trace(go.Scatter(
-                            x=df_growth['Time_hours'], y=df_growth['OD_mean'], mode='markers',
+                            x=df_growth['Time_hours'], y=df_growth['OD_mean'],
+                            mode='markers',
                             error_y=dict(type='data', array=df_growth['OD_std'], visible=True),
-                            marker=dict(color=colors[idx % len(colors)])
-                        ), row=1, col=idx + 1)
+                            marker=dict(color=colors[idx % len(colors)]),
+                            name=curve["name"]
+                        ), row=1 if plot_type == "Subplots" else None, col=idx + 1 if plot_type == "Subplots" else None)
 
                         time_fit = np.linspace(t_start, t_end, 100)
                         od_fit = exponential_model(time_fit, a_best, b_best)
+
                         fig.add_trace(go.Scatter(
-                            x=time_fit, y=od_fit, mode='lines', line=dict(color='red')
-                        ), row=1, col=idx + 1)
+                            x=time_fit, y=od_fit, mode='lines', line=dict(color='red'),
+                            name=f"Fit {curve['name']}"
+                        ), row=1 if plot_type == "Subplots" else None, col=idx + 1 if plot_type == "Subplots" else None)
 
-                        fig.add_annotation(
-                            x=8.3, y=0.2, xref='x', yref='y',
-                            text=f"OD600 = {a_best:.4f} * exp({b_best:.4f} * t)<br>R² = {best_r2:.4f}<br>Gen Time: {generation_time:.2f}h",
-                            showarrow=False, font=dict(size=12, color='blue'),
-                            row=1, col=idx + 1
-                        )
-
-                fig.update_xaxes(title_text='Time (hours)', linecolor='black', linewidth=1, showline=True, mirror=True)
-                fig.update_yaxes(title_text='OD600', linecolor='black', linewidth=1, showline=True, mirror=True)
-                fig.update_layout(
-                    title_text="E. coli Growth Curve Analysis",
-                    height=600, width=300 * len(curve_data), plot_bgcolor='white', showlegend=False, title_x=0.5
-                )
+                fig.update_xaxes(title_text="Time (hours)",linecolor='black', linewidth=1, showline=True, mirror=True)
+                fig.update_yaxes(title_text="OD600",linecolor='black', linewidth=1, showline=True, mirror=True)
+                fig.update_layout(title_text="E. coli Growth Curve Analysis", showlegend=True)
 
                 st.plotly_chart(fig)
 
